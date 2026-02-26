@@ -4,10 +4,10 @@
 
 ### Description
 
-This PR adds support for respecting the `SHELL` environment variable on Windows (win32) platforms, enabling users to use alternative shells such as Cygwin, MSYS, or Git Bash instead of being limited to cmd.exe, PowerShell, or WSL.
+This PR adds support for respecting the `SHELL` environment variable on Windows (win32) platforms, enabling users to use alternative shells such as bash (from environments like Cygwin, MSYS2, or Git for Windows) instead of being limited to cmd.exe, PowerShell, or WSL bash.
 
 #### Problem
-Previously, on Windows systems, Cline's shell detection logic would only check `COMSPEC` (which typically points to cmd.exe) or fall back to hardcoded defaults. This prevented users who had set up alternative Unix-like shells (such as Git Bash, Cygwin, or MSYS2) via the `SHELL` environment variable from using their preferred shell.
+Previously, on Windows systems, Cline's shell detection logic would only check `COMSPEC` (which typically points to cmd.exe) or fall back to hardcoded defaults. This prevented users who had set up alternative Unix-like shells (such as bash from Git for Windows, Cygwin, or MSYS2) via the `SHELL` environment variable from using their preferred shell.
 
 #### Solution
 The changes introduce two key improvements:
@@ -24,15 +24,15 @@ process.env.SHELL → process.env.COMSPEC → "cmd.exe"
 This matches the Unix behavior where `process.env.SHELL` is checked before falling back to `/bin/bash`.
 
 #### Impact
-- **Windows users with alternative shells**: Can now use their configured `SHELL` environment variable to specify their preferred shell (e.g., Git Bash, Cygwin bash, MSYS2)
+- **Windows users with alternative shells**: Can now use their configured `SHELL` environment variable to specify their preferred shell (e.g., bash from Git for Windows, Cygwin, or MSYS2)
 - **Existing users**: No breaking changes - the fallback behavior ensures existing setups continue to work as before
 - **Consistency**: Brings Windows shell detection behavior closer to Unix/Linux platforms
 
 ### Test Procedure
 
 1. **Tested shell detection on Windows with SHELL environment variable set**:
-   - Set `SHELL` environment variable to point to Git Bash: `C:\Program Files\Git\bin\bash.exe`
-   - Verified that Cline uses Git Bash instead of cmd.exe or PowerShell
+   - Set `SHELL` environment variable to point to bash: `C:\Program Files\Git\bin\bash.exe`
+   - Verified that Cline uses bash instead of cmd.exe or PowerShell
    - Tested command execution works correctly with the alternative shell
 
 2. **Verified fallback behavior**:
@@ -84,7 +84,7 @@ Not applicable - this is a backend/shell detection change with no UI components.
 - No changes to existing tests required as the logic gracefully handles both scenarios (with and without SHELL variable)
 
 **Why this matters**:
-Many Windows developers use Git for Windows (which includes Git Bash), Cygwin, or MSYS2 to get a Unix-like development environment. These tools set the `SHELL` environment variable to point to bash or other Unix shells. Respecting this variable allows Cline to work seamlessly in these common development setups.
+Many Windows developers use environments like Git for Windows, Cygwin, or MSYS2 to get Unix-like shells (bash, zsh, etc.) on Windows. These environments set the `SHELL` environment variable to point to their shell binary. Respecting this variable allows Cline to work seamlessly in these common development setups.
 
 **Compatibility**:
 - Windows users without `SHELL` set: No change in behavior

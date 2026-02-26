@@ -117,6 +117,21 @@ describe("Shell Detection Tests", () => {
 
 			expect(getShell()).to.equal("D:\\CustomCmd\\cmd.exe")
 		})
+
+		it("respects SHELL environment variable on Windows (for bash from Cygwin/MSYS2/Git for Windows)", () => {
+			vscode.workspace.getConfiguration = () => ({ get: () => undefined }) as any
+			process.env.SHELL = "C:\\Program Files\\Git\\bin\\bash.exe"
+
+			expect(getShell()).to.equal("C:\\Program Files\\Git\\bin\\bash.exe")
+		})
+
+		it("prefers SHELL over COMSPEC on Windows when both are set", () => {
+			vscode.workspace.getConfiguration = () => ({ get: () => undefined }) as any
+			process.env.SHELL = "C:\\msys64\\usr\\bin\\bash.exe"
+			process.env.COMSPEC = "C:\\Windows\\System32\\cmd.exe"
+
+			expect(getShell()).to.equal("C:\\msys64\\usr\\bin\\bash.exe")
+		})
 	})
 
 	// --------------------------------------------------------------------------
