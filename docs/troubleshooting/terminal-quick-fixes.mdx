@@ -54,6 +54,30 @@ echo 'export PAGER=cat' >> ~/.zshrc-vscode
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
+### Windows with Alternative Shells (Bash from Cygwin/MSYS2/Git for Windows)
+
+If you use bash or other Unix-like shells on Windows through environments like Cygwin, MSYS2, or Git for Windows, you can set the `SHELL` environment variable to tell Cline which shell to use:
+
+1. **Set the SHELL environment variable** (one-time setup):
+   ```cmd
+   # For Git Bash
+   setx SHELL "C:\Program Files\Git\bin\bash.exe"
+   
+   # For MSYS2
+   setx SHELL "C:\msys64\usr\bin\bash.exe"
+   
+   # For Cygwin
+   setx SHELL "C:\cygwin64\bin\bash.exe"
+   ```
+
+2. **Restart VSCode** for the change to take effect
+
+3. In **Background Execution Mode**, Cline will now use your specified shell
+
+<Note>
+The `SHELL` environment variable is now respected on Windows (as of v3.67.0). This allows Cline to automatically detect and use bash or other Unix-like shells you have installed.
+</Note>
+
 ### WSL
 
 -   Open folder from WSL: `code .`

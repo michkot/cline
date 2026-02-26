@@ -1,0 +1,59 @@
+================================================================================
+                   HOW TO BUILD CLINE EXTENSION LOCALLY
+================================================================================
+
+QUICK START (Copy-Paste This):
+--------------------------------------------------------------------------------
+git clone https://github.com/michkot/cline.git
+cd cline
+git checkout copilot/prepare-mr-text
+npm run install:all
+npm run protos
+npm run package
+npx @vscode/vsce package
+
+# Then in VSCode: Extensions → "..." → Install from VSIX → select .vsix file
+================================================================================
+
+WHAT YOU GET:
+--------------------------------------------------------------------------------
+✅ SHELL environment variable support on Windows (all execution modes)
+✅ Use bash from Git for Windows, Cygwin, or MSYS2
+✅ Proper terminology and documentation
+✅ UI guidance in Terminal Settings
+
+================================================================================
+
+DETAILED INSTRUCTIONS:
+--------------------------------------------------------------------------------
+
+See BUILD_LOCAL.md for:
+  - Complete step-by-step guide
+  - Troubleshooting
+  - Development workflow
+  - Testing instructions
+
+See QUICK_BUILD.md for:
+  - Fast command reference
+  - Common commands table
+  - Quick dev mode setup
+
+================================================================================
+
+ALTERNATIVE: DEV MODE (Quick Testing)
+--------------------------------------------------------------------------------
+cd cline
+code .
+# Press F5 in VSCode
+
+This opens a new VSCode window with the extension loaded for testing.
+
+================================================================================
+
+QUESTIONS?
+--------------------------------------------------------------------------------
+- Check BUILD_LOCAL.md for detailed instructions and troubleshooting
+- See CONTRIBUTING.md for development guidelines
+- Visit https://docs.cline.bot for user documentation
+
+================================================================================

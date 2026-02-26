@@ -163,8 +163,9 @@ function getShellFromEnv(): string | null {
 	const { env } = process
 
 	if (process.platform === "win32") {
-		// On Windows, COMSPEC typically holds cmd.exe
-		return env.COMSPEC || "C:\\Windows\\System32\\cmd.exe"
+		// On Windows, check SHELL first (for bash from Cygwin/MSYS2/Git for Windows),
+		// then fall back to COMSPEC (typically cmd.exe)
+		return env.SHELL || env.COMSPEC || "C:\\Windows\\System32\\cmd.exe"
 	}
 
 	if (process.platform === "darwin") {
