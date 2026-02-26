@@ -159,6 +159,13 @@ export const TerminalSettingsSection: React.FC<TerminalSettingsSectionProps> = (
 							</VSCodeDropdown>
 							<p className="text-xs text-[var(--vscode-descriptionForeground)] mt-1">
 								Choose whether Cline runs commands in the VS Code terminal or a background process.
+								{process.platform === "win32" && (
+									<>
+										{" "}
+										<strong>Windows users:</strong> Background Exec mode respects the SHELL environment variable,
+										allowing you to use bash from Cygwin, MSYS2, or Git for Windows.
+									</>
+								)}
 							</p>
 						</div>
 					)}

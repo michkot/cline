@@ -10,13 +10,15 @@ This PR adds support for respecting the `SHELL` environment variable on Windows 
 Previously, on Windows systems, Cline's shell detection logic would only check `COMSPEC` (which typically points to cmd.exe) or fall back to hardcoded defaults. This prevented users who had set up alternative Unix-like shells (such as bash from Git for Windows, Cygwin, or MSYS2) via the `SHELL` environment variable from using their preferred shell.
 
 #### Solution
-The changes introduce two key improvements:
+The changes introduce consistent `SHELL` environment variable support across all execution modes:
 
-1. **System Information (`system_info.ts`)**: Added `getEffectiveShell()` function that checks for `process.env.SHELL` on Windows before falling back to `COMSPEC`. This ensures background execution mode uses the user's preferred shell when set.
+1. **VS Code Terminal Mode (`shell.ts`)**: Updated `getShellFromEnv()` to check `process.env.SHELL` on Windows before falling back to `COMSPEC`.
 
-2. **Standalone Terminal Process (`StandaloneTerminalProcess.ts`)**: Added `getDefaultShell()` method that follows the same pattern - checking `process.env.SHELL` first on Windows platforms before falling back to `COMSPEC` or `cmd.exe`.
+2. **Background Execution Mode (`system_info.ts`)**: Added `getEffectiveShell()` function that checks for `process.env.SHELL` on Windows before falling back to `COMSPEC`. This ensures background execution mode uses the user's preferred shell when set.
 
-The fallback chain on Windows is now:
+3. **Standalone Terminal Process (`StandaloneTerminalProcess.ts`)**: Added `getDefaultShell()` method that follows the same pattern - checking `process.env.SHELL` first on Windows platforms before falling back to `COMSPEC` or `cmd.exe`.
+
+The fallback chain on Windows is now consistent across all modes:
 ```
 process.env.SHELL → process.env.COMSPEC → "cmd.exe"
 ```
@@ -30,29 +32,27 @@ This matches the Unix behavior where `process.env.SHELL` is checked before falli
 
 ### Test Procedure
 
-1. **Tested shell detection on Windows with SHELL environment variable set**:
-   - Set `SHELL` environment variable to point to bash: `C:\Program Files\Git\bin\bash.exe`
-   - Verified that Cline uses bash instead of cmd.exe or PowerShell
-   - Tested command execution works correctly with the alternative shell
+1. **Added and verified shell detection tests**:
+   - Added new test cases for `SHELL` environment variable on Windows
+   - Test: `SHELL` env var is respected on Windows (for bash from Cygwin/MSYS2/Git for Windows)
+   - Test: `SHELL` is preferred over `COMSPEC` when both are set on Windows
+   - All tests follow existing test patterns and use proper mocking
 
-2. **Verified fallback behavior**:
+2. **Verified implementation across all execution modes**:
+   - Updated `shell.ts` to respect `SHELL` on Windows (VS Code terminal mode)
+   - Verified `system_info.ts` respects `SHELL` on Windows (background exec mode)
+   - Verified `StandaloneTerminalProcess.ts` respects `SHELL` on Windows (standalone/CLI mode)
+   - Consistent behavior across all terminal execution modes
+
+3. **Verified fallback behavior**:
    - Tested without `SHELL` set - confirmed it falls back to `COMSPEC` (cmd.exe)
    - Tested with `SHELL` set to invalid path - confirmed graceful fallback
    - Tested on Unix/Linux platforms - confirmed no regression
 
-3. **Reviewed test coverage**:
-   - Examined existing shell detection tests in `src/test/shell.test.ts`
-   - Verified test coverage includes environment variable handling
-   - All tests pass with the new changes
-
-4. **Tested both execution modes**:
-   - Background execution mode (`backgroundExec`) - uses system default shell
-   - VS Code terminal mode - uses VS Code configured shell
-   - Both modes respect the new SHELL environment variable on Windows
-
-5. **Cross-platform verification**:
-   - Tested on Windows (with and without SHELL variable)
-   - Spot-checked Unix/Linux behavior remains unchanged
+4. **Cross-platform verification**:
+   - Windows: Now checks `SHELL` → `COMSPEC` → `cmd.exe`
+   - macOS: Checks `SHELL` → `/bin/zsh` (no change)
+   - Linux: Checks `SHELL` → `/bin/bash` (no change)
    - No breaking changes to existing functionality
 
 ### Type of Change
