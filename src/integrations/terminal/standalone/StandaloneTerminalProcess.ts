@@ -309,9 +309,10 @@ export class StandaloneTerminalProcess extends EventEmitter<TerminalProcessEvent
 	 */
 	private getDefaultShell(): string {
 		if (process.platform === "win32") {
-			return process.env.COMSPEC || "cmd.exe"
+			return process.env.SHELL || process.env.COMSPEC || "cmd.exe"
+		} else {
+			return process.env.SHELL || "/bin/bash"
 		}
-		return process.env.SHELL || "/bin/bash"
 	}
 
 	/**
@@ -325,7 +326,9 @@ export class StandaloneTerminalProcess extends EventEmitter<TerminalProcessEvent
 			if (shell.toLowerCase().includes("powershell") || shell.toLowerCase().includes("pwsh")) {
 				return ["-Command", command]
 			}
-			return ["/c", command]
+			if (shell.toLowerCase().includes("cmd.exe")) { 
+				return ["/c", command]
+			}
 		}
 		// Use -l for login shell, -c for command
 		return ["-l", "-c", command]

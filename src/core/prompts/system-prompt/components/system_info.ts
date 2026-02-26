@@ -23,7 +23,7 @@ function getEffectiveShell(context: SystemPromptContext): string {
 	if (context.terminalExecutionMode === "backgroundExec") {
 		// Background exec uses the system default shell, not VS Code config
 		if (process.platform === "win32") {
-			return process.env.COMSPEC || "cmd.exe"
+			return process.env.SHELL || process.env.COMSPEC || "cmd.exe"
 		} else {
 			return process.env.SHELL || "/bin/bash"
 		}
